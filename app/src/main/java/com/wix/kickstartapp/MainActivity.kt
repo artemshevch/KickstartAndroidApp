@@ -1,8 +1,10 @@
 package com.wix.kickstartapp
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -35,6 +37,10 @@ class MainActivity : AppCompatActivity() {
         viewModel.getStateLiveData().observe(this, Observer { state ->
             renderState(state)
         })
+
+        tvShareApp.setOnClickListener {
+            shareApp()
+        }
     }
 
     private fun renderState(state: TaskListViewModel.State) {
@@ -48,6 +54,15 @@ class MainActivity : AppCompatActivity() {
                 vwContentList.visibility = View.VISIBLE
                 adapter.updateItems(state.items)
             }
+        }
+    }
+
+    private fun shareApp() {
+        val intent = Intent(Intent.ACTION_SENDTO)
+        intent.data = Uri.parse("mailto:")
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Wow, this is brilliant app!")
+        if (intent.resolveActivity(packageManager) != null) {
+            startActivity(intent)
         }
     }
 }
