@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">KickstartApp</string>
     <string name="your_list_is_empty">Your list is empty</string>
+    <string name="tasks_list">Tasks list</string>
+    <string name="save">Save</string>
+    <string name="add_new_task">Add new task</string>
 </resources>
