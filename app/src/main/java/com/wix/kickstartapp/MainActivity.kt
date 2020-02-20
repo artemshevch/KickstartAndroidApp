@@ -2,23 +2,21 @@ package com.wix.kickstartapp
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.wix.kickstartapp.model.Task
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_tasks_list.*
 
 class MainActivity : AppCompatActivity() {
-    private val items = mutableListOf(
-        Task(title = "Buy a bread", finished = false),
-        Task(title = "Buy milk", finished = true)
-    )
+    private lateinit var viewModel: TaskListViewModel
+    private val adapter = TaskAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        val adapter = TaskAdapter()
-        adapter.updateItems(items)
 
         rvTasks.layoutManager = LinearLayoutManager(this)
         rvTasks.adapter = adapter
@@ -28,14 +26,28 @@ class MainActivity : AppCompatActivity() {
             btAddTask.isEnabled = text?.length != 0
         }
         btAddTask.setOnClickListener {
-            createNewTask(adapter)
+            viewModel.addTask(etTask.text.toString())
             etTask.setText("")
         }
+
+        viewModel = ViewModelProvider.AndroidViewModelFactory(application)
+            .create(TaskListViewModel::class.java)
+        viewModel.getStateLiveData().observe(this, Observer { state ->
+            renderState(state)
+        })
     }
 
-    private fun createNewTask(adapter: TaskAdapter) {
-        val task = Task(etTask.text.toString(), finished = false)
-        items.add(0, task)
-        adapter.updateItems(items)
+    private fun renderState(state: TaskListViewModel.State) {
+        when (state) {
+            TaskListViewModel.State.EmptyList -> {
+                vwEmptyList.visibility = View.VISIBLE
+                vwContentList.visibility = View.GONE
+            }
+            is TaskListViewModel.State.TasksList -> {
+                vwEmptyList.visibility = View.GONE
+                vwContentList.visibility = View.VISIBLE
+                adapter.updateItems(state.items)
+            }
+        }
     }
 }

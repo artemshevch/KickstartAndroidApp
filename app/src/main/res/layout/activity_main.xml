@@ -6,6 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <include layout="@layout/layout_tasks_list" />
+    <include
+        android:id="@+id/vwEmptyList"
+        layout="@layout/layout_empty_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <include
+        android:id="@+id/vwContentList"
+        layout="@layout/layout_tasks_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </FrameLayout>
